@@ -8,18 +8,20 @@ Each SDK comes with its own implementation of the backend for the application. Y
 
 The documentation for the travel app illustrates the data model and walks through the N1QL and FTS queries used to select flights and search for hotels.
 
-## Generic set up
+## Prerequisites
 
 You'll need:
 
-- Your favorite editor or IDE.
-- Your SDK of choice and its specific dependencies.
+- Git
+- Apache Maven
 - A local Couchbase 4.5 (or greater) installation. (Make sure that the travel-sample bucket has been loaded from 4.5 and that there is, at least, one node with data, query, index and full text search services in the cluster.)
 - That's it!
 
+Installing Git and Maven is outside the scope of this document. For example, on Linux you could use your distribution's package manager to install them.
+
 To start, it is easiest if you run Couchbase Server and the travel sample app on the same machine. You don't need to run your development environment this way, and advanced MDS configurations are supported. It's just easier to start a development environment with components running locally.
 
-Download [Couchbase Server 4.6](https://www.couchbase.com/downloads) and install it. As you follow the download instructions and setup wizard, make sure you keep all the services (`data`, `query`, and `index`) selected. Make sure also to install the sample bucket named `travel-sample` (introduced in Couchbase Server 4.0) because it contains the data used in this tutorial.
+Download [Couchbase Server 5.0.1 Community](https://www.couchbase.com/downloads) and install it. As you follow the download instructions and setup wizard, make sure you keep all the services (`data`, `query`, and `index`) selected. Make sure also to install the sample bucket named `travel-sample` (introduced in Couchbase Server 4.0) because it contains the data used in this tutorial.
 
 ![](assets/cb-server-services.png)
 
@@ -35,14 +37,15 @@ Note that the index mapping could be better tuned, but a generic mapping will al
 
 ## Using the Travel App
 
-Before running the application, make sure that the Couchbase Server instance is running.
+Before running the application, make sure that the Couchbase Server instance is running. If you are using Couchbase server
 
 ### Installation
 
 ```bash
 $ git clone https://github.com/couchbaselabs/try-cb-java.git
-cd try-cb-java
-mvn spring-boot:run
+$ cd try-cb-java
+$ git checkout 5.0-updates
+$ mvn spring-boot:run
 ```
 
 Open `127.0.0.1:8080` in your browser.
@@ -85,19 +88,39 @@ Click on the "earth" icon in the navigation bar (rightmost icon). Click on the F
 
 > Warning: You should make sure that you have installed Couchbase 4.5 with FTS enabled. The API backend that is used by the hotels page makes use of an FTS index that you have to create, named hotels.
 
-## Using CBQ
+## Using Couchbase Browser and Command Line Tools
 
 You can browse and access documents in Couchbase using browser and command line tools without writing any code. This can be helpful to you if you simply wish to inspect cluster data without writing code. You can access individual documents using the command line and web console.
 
 ### Using the command-line query shell (cbq)
 
-You can use the cbq program as a command line query shell to issue N1QL queries in couchbase. cbq is available on all cluster nodes and does not require a separate installation. Simply run cbq from the Couchbase installation directory ( /opt/couchbase/bin/cbq on Linux and "/Applications/Couchbase Server.app/Contents/Resources/couchbase-core/bin/cbq"). Once in the shell, you should be greeted by a prompt and ready to issue any N1QL query.
+You can use the cbq program as a command line query shell to issue N1QL queries in couchbase. cbq is available on all cluster nodes and does not require a separate installation. Simply run cbq from the Couchbase installation directory. (The program is located in **/opt/couchbase/bin** on Linux, **C:\Program Files\Couchbase Server\bin** on Windows and **/Applications/Couchbase Server.app/Contents/Resources/couchbase-core/bin** on macOS.) When the shell is running, a prompt is displayed, ready for you to issue any N1QL query.
 
 ```bash
-$ ./cbq
+$ ./cbq -e http://localhost:8091 -u=Administrator -p=password
 cbq> select airportname FROM `travel-sample` WHERE airportname IS NOT NULL LIMIT 1;
-	// TODO
+{
+    "requestID": "163ad4b2-a81f-472d-a4a7-83ea70172f3d",
+    "signature": {
+        "airportname": "json"
+    },
+    "results": [
+        {
+            "airportname": "Abbeville"
+        }
+    ],
+    "status": "success",
+    "metrics": {
+        "elapsedTime": "35.741626ms",
+        "executionTime": "35.688028ms",
+        "resultCount": 1,
+        "resultSize": 50
+    }
+}
+cbq> \exit;
 ```
+
+For more information on cbq commands, see the [cbq documentation](https://developer.couchbase.com/documentation/server/current/tools/cbq-shell.html).
 
 ### Web Console Document Access
 
@@ -105,21 +128,21 @@ You can use the Web Console to view, edit, and create JSON documents up to 2.5KB
 
 1. Navigate your browser to a cluster node. Type the address of the cluster with the admin port (8091). Use your username (usually Administrator). The password is the password you used when setting up the cluster.
 
-2. Once logged in, go to the Data Buckets section.
+2. Once logged in, click on **Buckets** to go to the Buckets section.
 
 	![](assets/webui-buckets.png)
 
-3. Click on the Documents button of the default bucket.
+3. Click on the **Documents** button link to the right of the `travel-sample` bucket.
 
 	![](assets/webui-documents.png)
 
-4. To retrieve a document, type in the document ID and click on Lookup ID. The document edit page is displayed.
+4. To retrieve a document, type in the document ID and click on **Look Up ID**. The document edit page is displayed.
 
 	![](assets/webui-lookup.png)
 
 	![](assets/webui-editor-existing.png)
 
-5. To create a new document, return to the Documents section and click on Create Document.
+5. To create a new document, return to the Documents section and click on **Add Document**.
 
 	![](assets/webui-create-document.png)
 
@@ -127,6 +150,6 @@ You can use the Web Console to view, edit, and create JSON documents up to 2.5KB
 
 	![](assets/webui-newdoc-prompt.png)
 
-7. Once created, you can now edit your document. Don't forget to Save when done.
+7. Once created, you can edit your document. Don't forget to click on **Save** when done.
 
 	![](assets/webui-editor-new.png)
