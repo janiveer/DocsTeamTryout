@@ -45,7 +45,7 @@ Before running the application, make sure that the Couchbase Server instance is 
 $ git clone https://github.com/couchbaselabs/try-cb-java.git
 $ cd try-cb-java
 $ git checkout 5.0-updates
-$ mvn spring-boot:run
+$ mvn spring-boot:run -Dstorage.host=127.0.0.1 -Dstorage.bucket=travel-sample -Dstorage.password=password -Dstorage.username=Administrator
 ```
 
 Open `127.0.0.1:8080` in your browser.
