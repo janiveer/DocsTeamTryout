@@ -10,8 +10,8 @@ The documentation for the travel app illustrates the data model and walks throug
 
 You'll need:
 
-- [Git](https://git-scm.com/)
-- [Apache Maven](https://maven.apache.org/)
+- [Git](https://git-scm.com/).
+- [Apache Maven](https://maven.apache.org/).
 - A local Couchbase 5.0 (or later) installation. (Make sure that the `travel-sample` bucket has been loaded, and that there is at least one node with data, query, index and full text search services in the cluster.)
 - That's it!
 
