@@ -12,7 +12,7 @@ You'll need:
 
 - [Git](https://git-scm.com/)
 - [Apache Maven](https://maven.apache.org/)
-- A local Couchbase 5.0 (or later) installation. (Make sure that the `travel-sample` bucket has been loaded and that there is, at least, one node with data, query, index and full text search services in the cluster.)
+- A local Couchbase 5.0 (or later) installation. (Make sure that the `travel-sample` bucket has been loaded, and that there is at least one node with data, query, index and full text search services in the cluster.)
 - That's it!
 
 Installing Git and Maven depends on your operating system and is outside the scope of this document. For example, on Linux you could use your distribution's package manager to install them.
