@@ -2,44 +2,44 @@
 
 Couchbase Travel is a sample web application that demonstrates how to interact with the Couchbase query services via the SDKs.
 
-Each SDK comes with its own implementation of the backend for the application. You can download the complete source code and then build and run the app. While the app runs, you can get a peek of what is happening in the backend via the "Narration (a console like UI element that can display N1QL queries for instance). It is only visible in components that communicate with the server (but can also be collapsed).
+Each SDK comes with its own implementation of the backend for the application. You can download the complete source code and then build and run the app.
 
-![](./assets/travel-app-narration.png)
+The documentation for the travel app illustrates the data model and walks through the N1QL and full text search (FTS) queries used to select flights and search for hotels.
 
-The documentation for the travel app illustrates the data model and walks through the N1QL and FTS queries used to select flights and search for hotels.
-
-## Prerequisites
+## Before You Begin
 
 You'll need:
 
-- Git
-- Apache Maven
-- A local Couchbase 4.5 (or greater) installation. (Make sure that the travel-sample bucket has been loaded from 4.5 and that there is, at least, one node with data, query, index and full text search services in the cluster.)
+- [Git](https://git-scm.com/)
+- [Apache Maven](https://maven.apache.org/)
+- A local Couchbase 5.0 (or later) installation. (Make sure that the `travel-sample` bucket has been loaded and that there is, at least, one node with data, query, index and full text search services in the cluster.)
 - That's it!
 
-Installing Git and Maven is outside the scope of this document. For example, on Linux you could use your distribution's package manager to install them.
+Installing Git and Maven depends on your operating system and is outside the scope of this document. For example, on Linux you could use your distribution's package manager to install them.
 
-To start, it is easiest if you run Couchbase Server and the travel sample app on the same machine. You don't need to run your development environment this way, and advanced MDS configurations are supported. It's just easier to start a development environment with components running locally.
+This section describes how to install Couchbase Server and the Couchbase Travel app on the same computer. You don't need to run your development environment this way, and advanced MDS configurations are supported. It's just easier to start a development environment with components running locally.
 
-Download [Couchbase Server 5.0.1 Community](https://www.couchbase.com/downloads) and install it. As you follow the download instructions and setup wizard, make sure you keep all the services (`data`, `query`, and `index`) selected. Make sure also to install the sample bucket named `travel-sample` (introduced in Couchbase Server 4.0) because it contains the data used in this tutorial.
+1. Download [Couchbase Server 5.0.1 Community](https://www.couchbase.com/downloads) and install it. When installed, open a browser and navigate to the Couchbase Web Console URL -- by default, `127.0.0.1:8091`. When prompted, create a new cluster. Make sure all the services (**Data Service**, **Index Service**, **Search Service** and **Query Service**) are selected.
 
-![](assets/cb-server-services.png)
+	![](assets/cb-server-services.png)
 
-![](assets/cb-server-travel-sample.png)
+2. If you have not installed the `travel-sample` bucket, or you installed it from an earlier version, select **Settings > Sample Buckets**. Select the **travel-sample** checkbox, and then click on **Load Sample Data**. When the bucket is ready to use, it is listed under the **Installed Samples** heading.
 
-If you already have Couchbase Server 4.5 or later installed but did not install the `travel-sample` bucket (or you installed it from a 4.0 version), open the Couchbase Web Console and select **Settings > Sample Buckets**. Select the `travel-sample` checkbox, and then click Create. A notification box in the upper-right corner disappears when the bucket is ready to use.
+	![](assets/cb-server-travel-sample.png)
 
-Finally, in order to be able to search for `hotels`, an FTS index called hotels must be created on the travel-sample bucket. Go to `Indexes > Full Text > New Full Text Index` and create the hotels index.
+3. Finally, in order to be able to search for hotels, you must create an FTS index on the `travel-sample` bucket. Select **Search > Add Index** and create an index named **hotels**.
 
-![](./assets/travel-app-fts-index.png)
+	![](assets/travel-app-fts-index.png)
 
-Note that the index mapping could be better tuned, but a generic mapping will also work fine for this example.
+> Note: The index mapping could be better tuned, but a generic mapping will also work fine for this example.
 
-## Using the Travel App
+## Using Couchbase Travel
 
-Before running the application, make sure that the Couchbase Server instance is running. If you are using Couchbase server
+Before running the application, make sure that the Couchbase Server instance is running.
 
-### Installation
+### Installing and Launching
+
+You can install Couchbase Travel using Git. To use the application with Couchbase Server 5.0 or later, you need to check out the `5.0-updates` branch. When launching Couchbase Travel with Apache Maven, specify the Administrator username and password for your local installation of Couchbase Server -- by default, `Administrator` and `password`.
 
 ```bash
 $ git clone https://github.com/couchbaselabs/try-cb-java.git
@@ -48,45 +48,59 @@ $ git checkout 5.0-updates
 $ mvn spring-boot:run -Dstorage.host=127.0.0.1 -Dstorage.bucket=travel-sample -Dstorage.password=password -Dstorage.username=Administrator
 ```
 
-Open `127.0.0.1:8080` in your browser.
+### Working with the Travel App
 
-To find a flight:
+While the app runs, you can get a peek of what is happening in the backend via the Narration -- a console-like UI element that can display N1QL queries, for instance. It is only visible in components that communicate with the server. You can collapse it if required.
 
-1. Open a browser and navigate to the login URL that was displayed when you started the app.
+![](assets/travel-app-narration.png)
 
-2. Sign in to Couchbase Travel by providing your credentials, or create a new account (which will expire after some time depending on the backend used, usually 1 hour).
+To find and book a flight:
+
+1. Open a browser and navigate to the Couchbase Travel URL -- by default, `127.0.0.1:8080`.
+
+2. Sign in to Couchbase Travel by creating a new account, or providing existing credentials. (New accounts expire after some time depending on the backend used, usually 1 hour.)
 
 	![](assets/travel-app-login.png)
 
-3. Find a flight:
+3. In the **Airport or City** section, enter an airport code or city name in the **From** and **To** fields. In the **Travel Dates** section, enter **Leave** and **Return** dates in MM/DD/YYYY format.
 
-![](assets/travel-app-screen-flight.png)
+	![](assets/travel-app-screen-flight.png)
 
-In the Airport or City section, enter an airport code or city name in the From and To fields. In the Travel Dates section, enter Leave and Return dates in MM/DD/YYYY format. Click Find Flights. The app displays the available flights for the outbound and return legs of the trip. Select one or more flights to add to your cart by clicking the choose button next to each flight.
+4. Click on **Find Flights**. The app displays the available flights for the outbound and return legs of the trip.
 
-![](assets/travel-app-screen-flight-choose.png)
+5. Select one or more flights to add to your cart by clicking on the **Choose** button next to each flight.
 
-Now you have flights stored locally in your cart. Go to the cart page and review your flights:
+	![](assets/travel-app-screen-flight-choose.png)
 
-1. Click on the cart icon button in the navigation bar, top right
-2. See that the number of flights in the cart and the total cost are displayed in said navigation bar.
-3. Review the flights in your cart, and book one by clicking on the book button next to it.
+Now you have flights stored locally in your cart. You can see that the number of flights in the cart and the total cost are displayed in the navigation bar at the top right. To review your flights, navigate to the cart page:
 
-![](assets/travel-app-screen-cart.png)
+1. Click on the cart button in the navigation bar. ![](assets/icon-cart.png)
 
-4. The flight is now booked, as confirmed by a message on the page.
+2. Review the flights in your cart, and book one by clicking on the **Book** button next to it.
 
-The flights that you've booked are stored in the backend. You can see which flights you've booked by navigating to the "user" page. The backend uses authentication to control access to the endpoints for booking and listing flights.
+	![](assets/travel-app-screen-cart.png)
 
-![](assets/travel-app-screen-user.png)
+The flight is now booked, as confirmed by a message on the page.
+
+The flights that you've booked are stored in the backend. The backend uses authentication to control access to the endpoints for booking and listing flights.
+
+To see which flights you've booked, navigate to the user page:
+
+1. Click on the user button in the navigation bar. ![](assets/icon-user.png)
+
+	![](assets/travel-app-screen-user.png)
 
 To search for an hotel, navigate to the hotel page:
 
-Click on the "earth" icon in the navigation bar (rightmost icon). Click on the Find Hotels button if you want to have a look at any first 100 hotels. Refine your search using the input boxes, either by keyword, geographically or both.
+1. Click on the hotel button on the right of the navigation bar. ![](assets/icon-hotel.png)
 
-![](assets/travel-app-screen-hotels.png)
+2. Don't enter any search criteria yet. Just click on the **Find Hotels** button. The first 100 hotels are displayed.
 
-> Warning: You should make sure that you have installed Couchbase 4.5 with FTS enabled. The API backend that is used by the hotels page makes use of an FTS index that you have to create, named hotels.
+3. Now enter a keyword in the **Description** box, or a location in the **Location** box, and click on **Find Hotels** again to refine your search.
+
+	![](assets/travel-app-screen-hotels.png)
+
+> Important: To use the hotel search, you must have created an FTS index named `hotels`, as described earlier. The API backend that is used by the hotel page makes use of this FTS index.
 
 ## Using Couchbase Browser and Command Line Tools
 
